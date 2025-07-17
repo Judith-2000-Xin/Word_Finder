@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Touch Word Finder</title>
   <style>
+    :root {
+      --line-font-size: 20px;
+    }
+
     body {
       font-family: "Times New Roman", serif;
       font-size: 12px;
@@ -17,11 +21,10 @@
     .word-box { font-size: 20px; margin: 10px; text-align: center; }
     .line {
       font-family: monospace;
-      font-size: clamp(12px, 2.5vw, 24px);
+      font-size: var(--line-font-size, 20px);
       text-align: center;
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: clip;
       margin: 5px 0;
     }
     .word-span {
@@ -212,22 +215,23 @@
 
     function nextPage() {
       promptEl.classList.remove("hidden");
-  gameEl.innerHTML = "";
-  foundWords = new Set();
       gameEl.classList.add("hidden");
+      gameEl.innerHTML = "";
+      foundWords = new Set();
       targetWords = shuffle([...new Set(WORD_POOL)]).slice(0, Math.floor(Math.random() * 3) + 1);
       targetWordsEl.textContent = targetWords.join(", ");
       let count = 5;
       countEl.textContent = count;
+
       const timer = setInterval(() => {
         count--;
         countEl.textContent = count;
         if (count <= 0) {
           clearInterval(timer);
           promptEl.classList.add("hidden");
+          adjustFontSizeToFit();
           generatePage(targetWords);
-          gameEl.classList.remove("hidden");  // 顯示文章內容
-          
+          gameEl.classList.remove("hidden");
           startTime = Date.now();
         }
       }, 1000);
@@ -239,6 +243,16 @@
       summaryEl.innerHTML = '<h3>Summary</h3>' + times.map((t, i) => `Page ${i + 1}: ⏱ ${t}s – ✅ ${correctCounts[i]}`).join("<br>");
     }
 
+    function adjustFontSizeToFit() {
+      const maxHeight = window.innerHeight;
+      const lineCount = 20;
+      const spacing = 10;
+      const fontSize = Math.floor((maxHeight - 100) / lineCount) - spacing;
+      document.documentElement.style.setProperty('--line-font-size', `${fontSize}px`);
+    }
+
+    window.addEventListener('resize', adjustFontSizeToFit);
+    adjustFontSizeToFit();
     nextPage();
   </script>
 </body>
