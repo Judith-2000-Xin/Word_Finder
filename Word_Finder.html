@@ -5,28 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Touch Word Finder</title>
   <style>
-    :root {
-      --line-font-size: 20px;
+    body {
+      margin: 0;
+      font-family: "Times New Roman", serif;
+      background: #f4f4f4;
+      overflow: hidden;
     }
 
-    body {
-      font-family: "Times New Roman", serif;
-      font-size: 12px;
-      line-height: 1.5;
-      text-align: justify;
-      padding: 20px;
-      background: #f4f4f4;
-    }
     .hidden { display: none; }
+
     .word-box { font-size: 20px; margin: 10px; text-align: center; }
+
     .line {
       font-family: monospace;
-      font-size: var(--line-font-size, 20px);
+      font-size: 20px;
       text-align: center;
       white-space: nowrap;
       overflow: hidden;
       margin: 5px 0;
     }
+
     .word-span {
       display: inline-block;
       cursor: pointer;
@@ -34,26 +32,41 @@
       border-radius: 4px;
       font-size: inherit;
     }
+
     .word-span:hover { background-color: #dfe6e9; }
     .correct { background-color: #55efc4; }
     .wrong { background-color: #fab1a0; }
+
     .countdown {
       font-size: 24px;
       margin: 20px;
       text-align: center;
     }
+
     .resting {
       font-size: 28px;
       text-align: center;
       margin-top: 100px;
     }
+
+    #prompt, #result {
+      padding: 20px;
+    }
+
+    #game-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100vh;
+      overflow: hidden;
+    }
+
     #game {
       display: flex;
       flex-direction: column;
       align-items: center;
-      max-width: 100%;
       padding: 10px;
-      box-sizing: border-box;
+      transform-origin: top center;
     }
   </style>
 </head>
@@ -68,7 +81,10 @@
     <div class="resting">Take a 30-second break...<br>Next page starting in <span id="restCount">30</span> seconds</div>
   </div>
 
-  <div id="game" class="hidden"></div>
+  <div id="game-wrapper">
+    <div id="game" class="hidden"></div>
+  </div>
+
   <div id="result" class="hidden">
     <h2 style="text-align: center">✅ Game Completed</h2>
     <div id="summary"></div>
@@ -160,6 +176,7 @@
       });
 
       clearTimeout(pageTimeout);
+      scaleGameToFit();
       pageTimeout = setTimeout(() => {
         const time = ((Date.now() - startTime) / 1000).toFixed(2);
         times.push(time);
@@ -229,7 +246,6 @@
         if (count <= 0) {
           clearInterval(timer);
           promptEl.classList.add("hidden");
-          adjustFontSizeToFit();
           generatePage(targetWords);
           gameEl.classList.remove("hidden");
           startTime = Date.now();
@@ -243,16 +259,17 @@
       summaryEl.innerHTML = '<h3>Summary</h3>' + times.map((t, i) => `Page ${i + 1}: ⏱ ${t}s – ✅ ${correctCounts[i]}`).join("<br>");
     }
 
-    function adjustFontSizeToFit() {
-      const maxHeight = window.innerHeight;
-      const lineCount = 20;
-      const spacing = 10;
-      const fontSize = Math.floor((maxHeight - 100) / lineCount) - spacing;
-      document.documentElement.style.setProperty('--line-font-size', `${fontSize}px`);
+    function scaleGameToFit() {
+      const wrapper = document.getElementById("game-wrapper");
+      const game = document.getElementById("game");
+      game.style.transform = "scale(1)";
+      const availableHeight = wrapper.clientHeight;
+      const actualHeight = game.scrollHeight;
+      const scaleFactor = Math.min(1, availableHeight / actualHeight);
+      game.style.transform = `scale(${scaleFactor})`;
     }
 
-    window.addEventListener('resize', adjustFontSizeToFit);
-    adjustFontSizeToFit();
+    window.addEventListener('resize', scaleGameToFit);
     nextPage();
   </script>
 </body>
