@@ -22,20 +22,20 @@
 
     .line {
       font-family: monospace;
-      font-size: calc(100vw / 52);
+      font-size: 2vw;
+      display: flex;
+      justify-content: center;
       white-space: nowrap;
-      overflow-x: hidden;
-      margin: 0 auto;
-      text-align: center;
+      overflow: visible;
+      margin: 0;
+      padding: 0;
     }
 
     .word-span {
       display: inline-block;
       font-size: inherit;
-      width: 1ch;
-      text-align: center;
       cursor: pointer;
-      border-radius: 4px;
+      text-align: center;
     }
 
     .word-span:hover { background-color: #dfe6e9; }
