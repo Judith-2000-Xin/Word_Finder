@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Touch Word Finder</title>
   <style>
+    :root {
+      --line-font-size: 4vh;
+    }
+
     body {
       margin: 0;
       font-family: "Times New Roman", serif;
@@ -14,21 +18,23 @@
 
     .hidden { display: none; }
 
-    .word-box { font-size: 20px; margin: 10px; text-align: center; }
+    .word-box { font-size: 24px; margin: 10px; text-align: center; }
 
     .line {
       font-family: monospace;
-      font-size: 20px;
+      font-size: var(--line-font-size);
       text-align: center;
       white-space: nowrap;
       overflow: hidden;
-      margin: 5px 0;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
     }
 
     .word-span {
       display: inline-block;
       cursor: pointer;
-      padding: 2px 4px;
+      padding: 0 2px;
       border-radius: 4px;
       font-size: inherit;
     }
@@ -54,19 +60,18 @@
     }
 
     #game-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
       height: 100vh;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     #game {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px;
-      transform-origin: top center;
+      justify-content: center;
+      height: 100%;
     }
   </style>
 </head>
@@ -176,7 +181,6 @@
       });
 
       clearTimeout(pageTimeout);
-      scaleGameToFit();
       pageTimeout = setTimeout(() => {
         const time = ((Date.now() - startTime) / 1000).toFixed(2);
         times.push(time);
@@ -189,16 +193,17 @@
     }
 
     function handleClick(span) {
+      const word = span.dataset.word;
+      if (!word) return;
+
       if (span.classList.contains("correct")) {
-        const word = span.dataset.word;
-        if (word) {
-          foundWords.delete(word);
-          document.querySelectorAll(`span[data-word='${word}']`).forEach(s => s.classList.remove("correct"));
-        }
-      } else if (span.dataset.word && !foundWords.has(span.dataset.word)) {
-        foundWords.add(span.dataset.word);
-        document.querySelectorAll(`span[data-word='${span.dataset.word}']`).forEach(s => s.classList.add("correct"));
+        foundWords.delete(word);
+        document.querySelectorAll(`span[data-word='${word}']`).forEach(s => s.classList.remove("correct"));
+      } else if (!foundWords.has(word)) {
+        foundWords.add(word);
+        document.querySelectorAll(`span[data-word='${word}']`).forEach(s => s.classList.add("correct"));
       }
+
       if (foundWords.size === targetWords.length) {
         const time = ((Date.now() - startTime) / 1000).toFixed(2);
         times.push(time);
@@ -259,17 +264,6 @@
       summaryEl.innerHTML = '<h3>Summary</h3>' + times.map((t, i) => `Page ${i + 1}: ⏱ ${t}s – ✅ ${correctCounts[i]}`).join("<br>");
     }
 
-    function scaleGameToFit() {
-      const wrapper = document.getElementById("game-wrapper");
-      const game = document.getElementById("game");
-      game.style.transform = "scale(1)";
-      const availableHeight = wrapper.clientHeight;
-      const actualHeight = game.scrollHeight;
-      const scaleFactor = Math.min(1, availableHeight / actualHeight);
-      game.style.transform = `scale(${scaleFactor})`;
-    }
-
-    window.addEventListener('resize', scaleGameToFit);
     nextPage();
   </script>
 </body>
