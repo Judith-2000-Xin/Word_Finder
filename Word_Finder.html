@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Touch Word Finder</title>
   <style>
-    :root {
-      --line-font-size: 4vh;
-    }
-
     body {
       margin: 0;
       font-family: "Times New Roman", serif;
@@ -18,25 +14,28 @@
 
     .hidden { display: none; }
 
-    .word-box { font-size: 24px; margin: 10px; text-align: center; }
+    .word-box {
+      font-size: 24px;
+      margin: 10px;
+      text-align: center;
+    }
 
     .line {
       font-family: monospace;
-      font-size: var(--line-font-size);
-      text-align: center;
+      font-size: calc(100vw / 52);
       white-space: nowrap;
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-      line-height: 1;
+      overflow-x: hidden;
+      margin: 0 auto;
+      text-align: center;
     }
 
     .word-span {
       display: inline-block;
-      cursor: pointer;
-      padding: 0 2px;
-      border-radius: 4px;
       font-size: inherit;
+      width: 1ch;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 4px;
     }
 
     .word-span:hover { background-color: #dfe6e9; }
@@ -99,7 +98,11 @@
     const TOTAL_PAGES = 20;
     const LINES_PER_PAGE = 20;
     const LINE_LENGTH = 50;
-    const WORD_POOL = ["COLOR", "COOL", "COAT", "MOON", "DATA", "CODE", "MAP", "RED", "BLUE", "SUN", "DOOR", "SKY", "TOP", "TASK", "TREE", "FIRE", "JUMP", "YES", "GO", "WIN"];
+    const WORD_POOL = [
+      "COLOR", "COOL", "COAT", "MOON", "DATA", "CODE",
+      "MAP", "RED", "BLUE", "SUN", "DOOR", "SKY",
+      "TOP", "TASK", "TREE", "FIRE", "JUMP", "YES", "GO", "WIN"
+    ];
 
     let currentPage = 0;
     let times = [];
