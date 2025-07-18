@@ -299,7 +299,7 @@
           promptEl.classList.add("hidden");
           gameEl.classList.remove("hidden");
           generatePage(targetWords);
-          startTime = Date.now();
+          startTime = Date.now(); // ✅ 僅在進入遊戲頁時開始計時
         }
       }, 1000);
     }
