@@ -317,7 +317,7 @@
 
       // 🔽 新增表格顯示按鈕與功能
       const showTableBtn = document.createElement("button");
-      showTableBtn.textContent = "📊 顯示每頁搜尋時間與正確數（表格）";
+      showTableBtn.textContent = "📊 Display search time and correct number per page (table)";
       showTableBtn.style.marginTop = "20px";
       showTableBtn.style.padding = "10px 20px";
       showTableBtn.style.fontSize = "1em";
@@ -335,7 +335,7 @@
         table.style.border = "1px solid #333";
 
         const headerRow = document.createElement("tr");
-        ["頁數", "搜尋時間（秒）", "找到單字數", "總目標數", "正確率 (%)"].forEach(text => {
+        ["Page", "Search time(S)", "Find the number of words", "Total number of targets", "Accuracy (%)"].forEach(text => {
           const th = document.createElement("th");
           th.textContent = text;
           th.style.border = "1px solid #333";
