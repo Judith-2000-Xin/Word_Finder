@@ -8,7 +8,7 @@
     html, body {
       margin: 0;
       padding: 0;
-      font-family: "Times New Roman", serif;
+      font-family: "Times New Roman", serif;a
       background: #ffffff;
       overflow-x: auto;
     }
@@ -32,6 +32,8 @@
       box-sizing: border-box;
       word-break: break-word;
       padding: clamp(0.3em, 1vw, 0.8em);
+      padding-left: clamp(1em, 3vw, 2em);
+      padding-right: clamp(1em, 3vw, 2em);
       overflow: hidden;
       margin: 0 auto;
     }
@@ -42,6 +44,8 @@
         font-size: clamp(12px, 2.5vw, 20px);
         gap: 0.08em;
         padding: 0.3em;
+        padding-left: 1.5em;
+        padding-right: 1.5em;
       }
     }
     
@@ -58,6 +62,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      min-width: 1em;
+      min-height: 1.4em;
+      padding: 0.1em;
     }
     .highlight {
       background-color: #28a745;
@@ -81,6 +88,47 @@
       align-items: center;
       z-index: 9999;
     }
+    .name-input-screen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      font-size: 2em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .name-input-container {
+      text-align: center;
+      max-width: 600px;
+      padding: 2rem;
+    }
+    .name-input-container h2 {
+      font-size: 1em;
+      margin-bottom: 1em;
+      line-height: 1.4;
+    }
+    .name-input-container input {
+      font-size: 0.6em;
+      padding: 15px 20px;
+      width: 300px;
+      max-width: 80vw;
+      border: 2px solid #28a745;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .name-input-container button {
+      font-size: 0.5em;
+      padding: 15px 30px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
     .summary-table {
       margin-top: 2rem;
       border-collapse: collapse;
@@ -95,35 +143,12 @@
       text-align: center;
       white-space: nowrap;
     }
-    #csvBtn, #googleSheetsBtn {
-      margin: 10px 5px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
+    #csvBtn {
+      margin-top: 10px;
       display: none;
     }
-    #csvBtn {
-      background-color: #6c757d;
-      color: white;
-    }
-    #csvBtn:hover {
-      background-color: #545b62;
-    }
-    #googleSheetsBtn {
-      background-color: #007bff;
-      color: white;
-    }
-    #googleSheetsBtn:hover {
-      background-color: #0056b3;
-    }
-    #googleSheetsBtn:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    #summary.show #csvBtn, #summary.show #googleSheetsBtn {
-      display: inline-block;
+    #summary.show #csvBtn {
+      display: block;
     }
     #header.hidden {
       display: none;
@@ -133,70 +158,11 @@
       max-width: 1200px;
       overflow-x: auto;
     }
-    
-    /* Google Sheets 配置區域樣式 */
-    .config-section {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      max-width: 600px;
-      width: 90%;
-    }
-    .config-section h3 {
-      margin-top: 0;
-      color: #333;
-      font-size: 0.8em;
-    }
-    .config-section input {
-      width: 100%;
-      padding: 8px;
-      margin: 5px 0;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-      font-size: 0.7em;
-    }
-    .config-section label {
-      display: block;
-      margin: 10px 0 5px 0;
+    .player-name-display {
+      font-size: 1.2em;
+      margin-bottom: 1rem;
+      color: #28a745;
       font-weight: bold;
-      font-size: 0.7em;
-    }
-    .config-section p {
-      font-size: 0.6em;
-      color: #666;
-      margin: 10px 0;
-      line-height: 1.4;
-    }
-    .config-section a {
-      color: #007bff;
-      text-decoration: none;
-    }
-    .config-section a:hover {
-      text-decoration: underline;
-    }
-    
-    /* 狀態顯示 */
-    #syncStatus {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 4px;
-      text-align: center;
-      display: none;
-    }
-    #syncStatus.success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      display: block;
-    }
-    #syncStatus.error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      display: block;
     }
   </style>
 </head>
@@ -209,55 +175,36 @@
         Click correctly to highlight the letter in green, wrong clicks will show in red. 
         Good luck!
       </p>
-      
-      <!-- Google Sheets Configuration -->
-      <div class="config-section" style="text-align: left;">
-        <h3>🔗 Google Sheets Configuration (Optional)</h3>
-        <label for="apiKey">Google Sheets API Key:</label>
-        <input type="text" id="apiKey" placeholder="Enter your Google Sheets API key">
-        
-        <label for="spreadsheetId">Spreadsheet ID:</label>
-        <input type="text" id="spreadsheetId" placeholder="Enter your Google Spreadsheet ID">
-        
-        <label for="sheetName">Sheet Name:</label>
-        <input type="text" id="sheetName" placeholder="Sheet1" value="Sheet1">
-        
-        <p>
-          <strong>How to get these values:</strong><br>
-          1. Go to <a href="https://console.developers.google.com/" target="_blank">Google Cloud Console</a><br>
-          2. Create a project and enable Google Sheets API<br>
-          3. Create credentials (API Key)<br>
-          4. Create a Google Sheet and copy the ID from the URL<br>
-          <em>Note: You can skip this and use Export CSV instead</em>
-        </p>
-      </div>
-      
       <button id="startBtn" style="font-size: 0.5em; padding: 15px 30px; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer;">
         START
       </button>
     </div>
   </div>
+  
+  <div id="nameInputScreen" class="name-input-screen hidden">
+    <div class="name-input-container">
+      <h2>Please enter your name. Thank you ^^</h2>
+      <div>
+        <input type="text" id="playerNameInput" placeholder="Enter your name here" maxlength="50">
+        <button id="submitNameBtn">Submit</button>
+      </div>
+    </div>
+  </div>
+  
   <h2 id="header" class="hidden" style="margin: 0.5em 0; font-size: 1.5em;">🔍 Find the letter: <span id="targetLetter"></span></h2>
   <div id="grid" class="letter-grid"></div>
   <div id="restingScreen" class="resting-screen hidden"><span id="restingText"></span></div>
   <div id="summary" class="hidden">
+    <div class="player-name-display" id="playerNameDisplay"></div>
     <div class="table-container">
       <table class="summary-table" id="summaryTable"></table>
     </div>
-    <div style="text-align: center; margin-top: 20px;">
-      <button id="csvBtn">Export CSV</button>
-      <button id="googleSheetsBtn">Sync to Google Sheets</button>
-    </div>
-    <div id="syncStatus"></div>
+    <button id="csvBtn">Export CSV</button>
   </div>
 
 <script>
-// Google Sheets API 配置
-let GOOGLE_SHEETS_CONFIG = {
-  apiKey: '',
-  spreadsheetId: '',
-  sheetName: 'Sheet1'
-};
+// 玩家姓名變數
+let playerName = '';
 
 // 為每個字母生成固定內容（使用種子確保一致性）
 function seededRandom(seed) {
@@ -411,7 +358,7 @@ function nextPage() {
   });
   
   currentPage++;
-  if (currentPage >= pages.length) return showSummary();
+  if (currentPage >= pages.length) return showNameInput();
   correctCount = 0;
   wrongCount = 0;
   renderPage();
@@ -449,9 +396,35 @@ function showRestingScreen(callback) {
   }, 1000);
 }
 
+function showNameInput() {
+  document.getElementById('grid').classList.add('hidden');
+  document.getElementById('header').classList.add('hidden');
+  document.getElementById('nameInputScreen').classList.remove('hidden');
+  document.getElementById('nameInputScreen').style.display = 'flex';
+  document.getElementById('playerNameInput').focus();
+}
+
+function submitName() {
+  const nameInput = document.getElementById('playerNameInput');
+  playerName = nameInput.value.trim();
+  
+  if (playerName === '') {
+    alert('Please enter your name before proceeding.');
+    return;
+  }
+  
+  document.getElementById('nameInputScreen').classList.add('hidden');
+  document.getElementById('nameInputScreen').style.display = 'none';
+  showSummary();
+}
+
 function showSummary() {
   document.getElementById('grid').classList.add('hidden');
   document.getElementById('header').classList.add('hidden');
+  
+  // 顯示玩家姓名
+  document.getElementById('playerNameDisplay').textContent = `Player: ${playerName}`;
+  
   const table = document.getElementById('summaryTable');
   
   // 移除 How Many Times Each Letter Appears 欄位
@@ -505,8 +478,23 @@ function showSummary() {
 }
 
 function exportCSV() {
+  // 取得當前日期時間
+  const now = new Date();
+  const dateTime = now.toLocaleString('zh-TW', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+  
+  // CSV 開頭包含玩家資訊
+  let csv = `Player Name: ${playerName}\n`;
+  csv += `Test Date: ${dateTime}\n\n`;
+  
   // 主要資料CSV（移除 How Many Times Each Letter Appears）
-  let csv = 'Page,Letter,Correct,Wrong,Total Letters,Accuracy,Time\n';
+  csv += 'Page,Letter,Correct,Wrong,Total Letters,Accuracy,Time\n';
   data.forEach(row => {
     csv += `${row.page},${row.letter},${row.correct},${row.wrong},${row.totalLetters},${row.accuracy},${row.time}\n`;
   });
@@ -529,150 +517,14 @@ function exportCSV() {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = 'letter_finder_results.csv';
+  
+  // 檔案名稱包含玩家姓名和日期
+  const fileName = `letter_finder_results_${playerName}_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.csv`;
+  link.download = fileName;
   link.click();
 }
 
-// 新增：Google Sheets 同步功能
-async function syncToGoogleSheets() {
-  const statusDiv = document.getElementById('syncStatus');
-  const syncBtn = document.getElementById('googleSheetsBtn');
-  
-  // 檢查配置
-  if (!GOOGLE_SHEETS_CONFIG.apiKey || !GOOGLE_SHEETS_CONFIG.spreadsheetId) {
-    showStatus('Please configure Google Sheets settings before syncing.', 'error');
-    return;
-  }
-  
-  syncBtn.disabled = true;
-  syncBtn.textContent = 'Syncing...';
-  showStatus('Syncing data to Google Sheets...', 'success');
-  
-  try {
-    // 準備數據
-    const timestamp = new Date().toLocaleString();
-    const sessionId = `Session_${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}`;
-    
-    // 準備主要結果數據
-    const summaryHeaders = ['Session ID', 'Timestamp', 'Page', 'Letter', 'Correct', 'Wrong', 'Total Letters', 'Accuracy', 'Time (s)'];
-    const summaryData = [summaryHeaders];
-    
-    data.forEach(row => {
-      summaryData.push([
-        sessionId,
-        timestamp,
-        row.page,
-        row.letter,
-        row.correct,
-        row.wrong,
-        row.totalLetters,
-        row.accuracy,
-        row.time
-      ]);
-    });
-    
-    // 添加總計行
-    const totalLetters = data.reduce((sum, row) => sum + row.totalLetters, 0);
-    const totalCorrect = data.reduce((sum, row) => sum + row.correct, 0);
-    const totalWrong = data.reduce((sum, row) => sum + row.wrong, 0);
-    const overallAccuracy = totalLetters > 0 ? ((totalCorrect / totalLetters) * 100).toFixed(1) : '0.0';
-    
-    summaryData.push([
-      sessionId,
-      timestamp,
-      'Total',
-      '26 Pages',
-      totalCorrect,
-      totalWrong,
-      totalLetters,
-      `${overallAccuracy}%`,
-      2340
-    ]);
-    
-    // 上傳主要數據
-    await appendToSheet(GOOGLE_SHEETS_CONFIG.sheetName, summaryData);
-    
-    // 如果有詳細點擊數據，上傳到另一個工作表
-    if (clickData.length > 0) {
-      const detailHeaders = ['Session ID', 'Timestamp', 'Page', 'Target Letter', 'Clicked Character', 'Correct', 'Time (seconds)', 'Position'];
-      const detailData = [detailHeaders];
-      
-      clickData.forEach(click => {
-        detailData.push([
-          sessionId,
-          timestamp,
-          click.page,
-          click.targetLetter,
-          click.clickedChar,
-          click.correct,
-          click.timeInSeconds,
-          click.position
-        ]);
-      });
-      
-      // 嘗試上傳到 Details 工作表，如果失敗就上傳到主工作表
-      try {
-        await appendToSheet('Details', detailData);
-      } catch (error) {
-        console.warn('Could not upload to Details sheet, adding to main sheet:', error);
-        // 在主工作表添加分隔行和詳細數據
-        await appendToSheet(GOOGLE_SHEETS_CONFIG.sheetName, [[''], ['Detailed Click Data:']]);
-        await appendToSheet(GOOGLE_SHEETS_CONFIG.sheetName, detailData);
-      }
-    }
-    
-    showStatus('Data successfully synced to Google Sheets!', 'success');
-    
-  } catch (error) {
-    console.error('Sync error:', error);
-    showStatus(`Error syncing to Google Sheets: ${error.message}`, 'error');
-  } finally {
-    syncBtn.textContent = 'Sync to Google Sheets';
-    syncBtn.disabled = false;
-  }
-}
-
-async function appendToSheet(sheetName, data) {
-  const range = `${sheetName}!A:Z`;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SHEETS_CONFIG.spreadsheetId}/values/${range}:append?valueInputOption=RAW&key=${GOOGLE_SHEETS_CONFIG.apiKey}`;
-  
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      values: data
-    })
-  });
-  
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
-  }
-  
-  return response.json();
-}
-
-function showStatus(message, type) {
-  const statusDiv = document.getElementById('syncStatus');
-  statusDiv.textContent = message;
-  statusDiv.className = type;
-  statusDiv.style.display = 'block';
-  
-  if (type === 'success') {
-    setTimeout(() => {
-      statusDiv.style.display = 'none';
-    }, 5000);
-  }
-}
-
 function startGame() {
-  // 保存Google Sheets配置
-  GOOGLE_SHEETS_CONFIG.apiKey = document.getElementById('apiKey').value.trim();
-  GOOGLE_SHEETS_CONFIG.spreadsheetId = document.getElementById('spreadsheetId').value.trim();
-  GOOGLE_SHEETS_CONFIG.sheetName = document.getElementById('sheetName').value.trim() || 'Sheet1';
-  
   document.getElementById('welcomeScreen').style.display = 'none';
   showRestingScreen(() => {
     renderPage();
@@ -683,7 +535,14 @@ function startGame() {
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('startBtn').addEventListener('click', startGame);
   document.getElementById('csvBtn').addEventListener('click', exportCSV);
-  document.getElementById('googleSheetsBtn').addEventListener('click', syncToGoogleSheets);
+  document.getElementById('submitNameBtn').addEventListener('click', submitName);
+  
+  // 支援按 Enter 鍵提交姓名
+  document.getElementById('playerNameInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      submitName();
+    }
+  });
   
   // 初始化隱藏遊戲元素
   document.getElementById('grid').classList.add('hidden');
